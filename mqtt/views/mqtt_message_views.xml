@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <record id="view_mqtt_message_tree" model="ir.ui.view">
+        <field name="model">mqtt.message</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="state == 'processed'">
+                <field name="topic"/>
+                <field name="create_date"/>
+                <field name="subscriber"/>
+                <field name="direction"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_mqtt_message_form" model="ir.ui.view">
+        <field name="model">mqtt.message</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button string="Enqueue" name="action_enqueue" type="object" class="btn-primary" states="draft"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="topic"/>
+                            <field name="qos"/>
+                            <field name="retain"/>
+                        </group>
+                        <group>
+                            <field name="direction"/>
+                            <field name="subscriber"/>
+                            <field name="create_date"/>
+                            <field name="enqueue_date"/>
+                            <field name="process_date"/>
+                        </group>
+                    </group>
+
+                    <group string="Payload">
+                        <field name="payload" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_mqtt_message_search" model="ir.ui.view">
+        <field name="model">mqtt.message</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="topic" operator="ilike"/>
+                <separator/>
+                <filter name="outgoing" string="Outgoing" domain="[('direction', '=', 'outgoing')]"/>
+                <filter name="incoming" string="Incoming" domain="[('direction', '=', 'incoming')]"/>
+                <separator/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="enqueued" string="Enqueued" domain="[('state', '=', 'enqueued')]"/>
+                <filter name="processed" string="Processed" domain="[('state', '=', 'processed')]"/>
+                <separator/>
+                <filter name="qos0" string="At Most Once" domain="[('qos', '=', '0')]"/>
+                <filter name="qos1" string="At Least Once" domain="[('qos', '=', '1')]"/>
+                <filter name="qos2" string="Exactly Once" domain="[('qos', '=', '2')]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Direction" name="direction" context="{'group_by': 'direction'}"/>
+                    <filter string="Quality of Service" name="qos" context="{'group_by': 'qos'}"/>
+                    <filter string="State" name="state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_mqtt_message_enqueue" model="ir.actions.server">
+        <field name="name">Enqueue</field>
+        <field name="model_id" ref="model_mqtt_message"/>
+        <field name="binding_model_id" ref="model_mqtt_message"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">action = records.action_enqueue()</field>
+    </record>
+
+    <record id="action_mqtt_message" model="ir.actions.act_window">
+        <field name="name">MQTT Message</field>
+        <field name="res_model">mqtt.message</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="mqtt_message_menu" name="Messages" action="action_mqtt_message" parent="mqtt_main_menu"/>
+</odoo>

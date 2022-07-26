@@ -1,3 +1,6 @@
+# © 2022 Florian Kantelberg - initOS GmbH
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+
 import logging
 import time
 from contextlib import contextmanager
@@ -159,6 +162,7 @@ class MQTTRunner:
             for topic, qos in subs.items()
             if topic not in self.subscriptions
         ]
+        _logger.error(topics)
         if topics:
             result, _ = self.client.subscribe(topics)
             if result == mqtt.MQTT_ERR_SUCCESS:
@@ -179,8 +183,6 @@ class MQTTRunner:
     def _has_mqtt(self):
         """Check if the module is installed in the database"""
         with self.cursor() as cr:
-            _logger.error(cr)
-            _logger.info(self.cursor)
             cr.execute(
                 "SELECT 1 FROM pg_tables WHERE tablename=%s", ("ir_module_module",)
             )

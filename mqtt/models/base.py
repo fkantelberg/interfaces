@@ -1,3 +1,6 @@
+# © 2022 Florian Kantelberg - initOS GmbH
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+
 import json
 from datetime import date, datetime
 
@@ -40,16 +43,14 @@ class Base(models.AbstractModel):
         if self._name.startswith("ir.") and self._name != "mqtt.message":
             return records
 
-        if not records:
-            return records
-
         # Generate messages for defined events
         etype = self.sudo().env.ref("mqtt.type_create", False)
-        if not etype:
+        if not etype or not records:
             return records
 
         domain = [("model", "=", self._name), ("type_ids", "=", etype.id)]
         for event in self.env["mqtt.event"].sudo().search(domain):
+            print(records, etype, event)
             fields = event.mapped("field_ids.name") + ["create_date", "create_uid"]
             self.sudo().mqtt_publish(
                 event.topic,

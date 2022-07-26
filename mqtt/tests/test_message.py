@@ -1,8 +1,11 @@
+# © 2022 Florian Kantelberg - initOS GmbH
+# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+
 import json
 from unittest.mock import MagicMock
 
 from odoo import api, models
-from odoo.exceptions import AccessDenied
+from odoo.exceptions import AccessDenied, ValidationError
 from odoo.tests import TransactionCase
 
 
@@ -113,3 +116,11 @@ class TestMessage(TransactionCase):
         self.assertNotIn(msg, self.messages)
         self.assertEqual(msg.topic, "testing/new")
         self.assertEqual(msg.payload, '{"pay": "load"}')
+
+    def test_onchange_topic(self):
+        msg = self.messages[0]
+        msg._onchange_topic()
+
+        msg.topic = "odoo/#/create"
+        with self.assertRaises(ValidationError):
+            msg._onchange_topic()

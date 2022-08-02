@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <record id="view_mqtt_consumer_tree" model="ir.ui.view">
+        <field name="model">mqtt.consumer</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="not active">
+                <field name="active" invisible="1"/>
+                <field name="name"/>
+                <field name="topic"/>
+                <field name="model_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_mqtt_consumer_form" model="ir.ui.view">
+        <field name="model">mqtt.consumer</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="topic"/>
+                        <field name="active" widget="boolean_toggle"/>
+                        <field name="model_id"/>
+                    </group>
+
+                    <notebook>
+                        <page string="Code">
+                            <field name="code" widget="ace" options="{'mode': 'python'}"/>
+                        </page>
+                        <page string="Help">
+                            <div style="margin-top: 4px;">
+                                <h3>Help with Python expressions</h3>
+                                <p>
+                                    The following variables are additionally defined:
+                                    <field name="help_text"/>
+                                </p>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_mqtt_consumer_search" model="ir.ui.view">
+        <field name="model">mqtt.consumer</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="topic" operator="ilike"/>
+                <field name="model_id"/>
+                <field name="user_id"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_mqtt_consumer" model="ir.actions.act_window">
+        <field name="name">Consumers</field>
+        <field name="res_model">mqtt.consumer</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'active_test': False}</field>
+    </record>
+
+    <menuitem id="mqtt_consumer_menu" name="Consumers" action="action_mqtt_consumer" parent="mqtt_main_menu"/>
+</odoo>

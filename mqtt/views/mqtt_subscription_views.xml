@@ -27,8 +27,8 @@
         </field>
     </record>
 
-    <record id="view_mqtt_message_search" model="ir.ui.view">
-        <field name="model">mqtt.message</field>
+    <record id="view_mqtt_subscription_search" model="ir.ui.view">
+        <field name="model">mqtt.subscription</field>
         <field name="arch" type="xml">
             <search>
                 <field name="topic" operator="ilike"/>

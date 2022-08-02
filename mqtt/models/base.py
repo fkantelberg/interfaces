@@ -50,7 +50,6 @@ class Base(models.AbstractModel):
 
         domain = [("model", "=", self._name), ("type_ids", "=", etype.id)]
         for event in self.env["mqtt.event"].sudo().search(domain):
-            print(records, etype, event)
             fields = event.mapped("field_ids.name") + ["create_date", "create_uid"]
             self.sudo().mqtt_publish(
                 event.topic,

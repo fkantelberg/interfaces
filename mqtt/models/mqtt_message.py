@@ -67,7 +67,7 @@ class MQTTMessage(models.Model):
 
     @api.onchange("topic")
     def _onchange_topic(self):
-        if any(k in self.topic for k in "#+"):
+        if any(k in (self.topic or "") for k in "#+"):
             raise ValidationError(_("Topic can't include # or + as character"))
 
     def _compute_subscriber(self):
@@ -83,6 +83,11 @@ class MQTTMessage(models.Model):
                 subbed = messages._filter_by_subscription(func._mqtt)
                 for rec in subbed:
                     subs[rec] += 1
+
+        for consumer in self.env["mqtt.consumer"].search([]):
+            subbed = messages._filter_by_subscription(consumer.topic)
+            for rec in subbed:
+                subs[rec] += 1
 
         for rec, counter in subs.items():
             rec.subscriber = counter
@@ -144,14 +149,8 @@ class MQTTMessage(models.Model):
         ids = self.env.cr.fetchall()
         return self.browse([x[0] for x in ids])
 
-    def _run_mqtt_router(self):
-        """Route the newly received messages"""
-        if not self.env.is_admin():
-            raise AccessDenied()
-
+    def _run_mqtt_router_api(self, messages):
         now = datetime.now()
-        domain = [("state", "=", "enqueued"), ("direction", "=", "incoming")]
-        messages = self.search(domain)
         for model in self.env.values():
             for attr, func in inspect.getmembers(type(model), is_mqtt):
                 _logger.debug(f"Calling {model}.{attr}()")
@@ -170,6 +169,34 @@ class MQTTMessage(models.Model):
                 except Exception:
                     _logger.exception(f"Failed {model}.{attr}()")
                     self.env.cr.rollback()
+
+    def _run_mqtt_router_consumer(self, messages):
+        now = datetime.now()
+        for consumer in self.env["mqtt.consumer"].search([]):
+            subbed = messages._filter_by_subscription(consumer.topic)
+            if not subbed:
+                continue
+
+            try:
+                # Make the messages appear to be newly received if
+                # multiple routes are used for the same message
+                subbed.write({"state": "enqueued"})
+                consumer.process(subbed.with_context(mqtt_lock=True))
+                subbed.write({"state": "processed", "process_date": now})
+                self.env.cr.commit()
+            except Exception as e:
+                _logger.exception(e)
+                self.env.cr.rollback()
+
+    def _run_mqtt_router(self):
+        """Route the newly received messages"""
+        if not self.env.is_admin():
+            raise AccessDenied()
+
+        domain = [("state", "=", "enqueued"), ("direction", "=", "incoming")]
+        messages = self.search(domain)
+        self._run_mqtt_router_api(messages)
+        self._run_mqtt_router_consumer(messages)
 
     def action_enqueue(self):
         recs = self.filtered_domain([("state", "=", "draft")])

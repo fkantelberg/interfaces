@@ -162,7 +162,6 @@ class MQTTRunner:
             for topic, qos in subs.items()
             if topic not in self.subscriptions
         ]
-        _logger.error(topics)
         if topics:
             result, _ = self.client.subscribe(topics)
             if result == mqtt.MQTT_ERR_SUCCESS:

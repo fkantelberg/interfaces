@@ -50,6 +50,17 @@ class MQTTEvent(models.Model):
         if self.topic and any(k in self.topic for k in "#+"):
             raise ValidationError(_("Topic can't include # or + as character"))
 
+    @api.onchange("model_id")
+    def _onchange_model(self):
+        if not self.model_id:
+            return
+
+        model = self.env[self.model_id.model]
+        if model.mqtt_blacklisted():
+            raise ValidationError(
+                _("Model is blacklisted and can't be used for an event")
+            )
+
     def write(self, vals):
         res = super().write(vals)
         for rec in self.filtered("active"):

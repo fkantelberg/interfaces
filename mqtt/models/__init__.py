@@ -4,9 +4,9 @@
 from . import (
     base,
     mqtt_base,
-    mqtt_consumer,
     mqtt_event,
     mqtt_message,
+    mqtt_processor,
     mqtt_subscription,
     res_config_settings,
 )

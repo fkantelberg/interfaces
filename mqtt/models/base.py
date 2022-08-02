@@ -19,7 +19,13 @@ class Base(models.AbstractModel):
     _inherit = "base"
 
     @api.model
-    def mqtt_publish(self, topic, payload, qos="0", retain=False):
+    def mqtt_blacklisted(self):
+        """Disable the MQTT events for specific models to prevent impact to basic
+        structures"""
+        return self._name.startswith("ir.") or self._name == "mqtt.message"
+
+    @api.model
+    def mqtt_publish(self, topic, payload, qos="0", retain=False, enqueue=True):
         """Helper function to publish a new message"""
         if not isinstance(payload, str):
             payload = json.dumps(payload, cls=Encoder)
@@ -27,7 +33,7 @@ class Base(models.AbstractModel):
         return self.env["mqtt.message"].create(
             {
                 "direction": "outgoing",
-                "state": "enqueued",
+                "state": "enqueued" if enqueue else "draft",
                 "enqueue_date": datetime.now(),
                 "topic": topic,
                 "payload": payload,
@@ -40,7 +46,7 @@ class Base(models.AbstractModel):
     @api.returns("self", lambda value: value.id)
     def create(self, vals_list):
         records = super().create(vals_list)
-        if self._name.startswith("ir.") and self._name != "mqtt.message":
+        if self.mqtt_blacklisted():
             return records
 
         # Generate messages for defined events
@@ -62,7 +68,7 @@ class Base(models.AbstractModel):
 
     def write(self, vals):
         res = super().write(vals)
-        if self._name.startswith("ir.") and self._name != "mqtt.message":
+        if self.mqtt_blacklisted():
             return res
 
         # Generate messages for defined events
@@ -81,5 +87,26 @@ class Base(models.AbstractModel):
                     qos=event.qos,
                     retain=event.retain,
                 )
+
+        return res
+
+    def unlink(self):
+        res = super().unlink()
+        if self.mqtt_blacklisted():
+            return res
+
+        # Generate messages for defined events
+        etype = self.sudo().env.ref("mqtt.type_delete", False)
+        if not etype:
+            return res
+
+        domain = [("model", "=", self._name), ("type_ids", "=", etype.id)]
+        for event in self.env["mqtt.event"].sudo().search(domain):
+            self.sudo().mqtt_publish(
+                event.topic,
+                payload=self.ids,
+                qos=event.qos,
+                retain=event.retain,
+            )
 
         return res

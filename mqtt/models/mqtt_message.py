@@ -67,7 +67,7 @@ class MQTTMessage(models.Model):
 
     @api.onchange("topic")
     def _onchange_topic(self):
-        if any(k in (self.topic or "") for k in "#+"):
+        if self.topic and any(k in self.topic for k in "#+"):
             raise ValidationError(_("Topic can't include # or + as character"))
 
     def _compute_subscriber(self):
@@ -84,8 +84,8 @@ class MQTTMessage(models.Model):
                 for rec in subbed:
                     subs[rec] += 1
 
-        for consumer in self.env["mqtt.consumer"].search([]):
-            subbed = messages._filter_by_subscription(consumer.topic)
+        for processor in self.env["mqtt.processor"].search([]):
+            subbed = messages._filter_by_subscription(processor.topic)
             for rec in subbed:
                 subs[rec] += 1
 
@@ -170,10 +170,10 @@ class MQTTMessage(models.Model):
                     _logger.exception(f"Failed {model}.{attr}()")
                     self.env.cr.rollback()
 
-    def _run_mqtt_router_consumer(self, messages):
+    def _run_mqtt_router_processor(self, messages):
         now = datetime.now()
-        for consumer in self.env["mqtt.consumer"].search([]):
-            subbed = messages._filter_by_subscription(consumer.topic)
+        for processor in self.env["mqtt.processor"].search([]):
+            subbed = messages._filter_by_subscription(processor.topic)
             if not subbed:
                 continue
 
@@ -181,7 +181,7 @@ class MQTTMessage(models.Model):
                 # Make the messages appear to be newly received if
                 # multiple routes are used for the same message
                 subbed.write({"state": "enqueued"})
-                consumer.process(subbed.with_context(mqtt_lock=True))
+                processor.process(subbed.with_context(mqtt_lock=True))
                 subbed.write({"state": "processed", "process_date": now})
                 self.env.cr.commit()
             except Exception as e:
@@ -196,7 +196,7 @@ class MQTTMessage(models.Model):
         domain = [("state", "=", "enqueued"), ("direction", "=", "incoming")]
         messages = self.search(domain)
         self._run_mqtt_router_api(messages)
-        self._run_mqtt_router_consumer(messages)
+        self._run_mqtt_router_processor(messages)
 
     def action_enqueue(self):
         recs = self.filtered_domain([("state", "=", "draft")])

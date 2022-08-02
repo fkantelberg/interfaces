@@ -1,6 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_mqtt_consumer,access_mqtt_consumer,model_mqtt_consumer,base.group_system,1,1,1,1
 access_mqtt_event,access_mqtt_event,model_mqtt_event,base.group_system,1,1,1,1
 access_mqtt_event_type,access_mqtt_event_type,model_mqtt_event_type,base.group_system,1,0,0,0
 access_mqtt_message,access_mqtt_message,model_mqtt_message,base.group_system,1,1,1,1
+access_mqtt_processor,access_mqtt_processor,model_mqtt_processor,base.group_system,1,1,1,1
 access_mqtt_subscription,access_mqtt_subscription,model_mqtt_subscription,base.group_system,1,1,1,1

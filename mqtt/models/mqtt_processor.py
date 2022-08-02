@@ -1,14 +1,14 @@
 # © 2022 Florian Kantelberg - initOS GmbH
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import safe_eval
 
 
-class MQTTConsumer(models.Model):
-    _name = "mqtt.consumer"
-    _description = _("MQTT Consumer")
+class MQTTProcessor(models.Model):
+    _name = "mqtt.processor"
+    _description = _("MQTT Processor")
 
     def _get_default_code(self):
         variables = self.default_variables()
@@ -41,6 +41,7 @@ class MQTTConsumer(models.Model):
         desc = "\n".join(lines)
         self.write({"help_text": f"<ul>{desc}</ul>"})
 
+    @api.model
     def default_variables(self):
         """Informations about the available variables in the python code"""
         return {

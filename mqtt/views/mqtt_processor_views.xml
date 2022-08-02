@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <odoo>
-    <record id="view_mqtt_consumer_tree" model="ir.ui.view">
-        <field name="model">mqtt.consumer</field>
+    <record id="view_mqtt_processor_tree" model="ir.ui.view">
+        <field name="model">mqtt.processor</field>
         <field name="arch" type="xml">
             <tree decoration-muted="not active">
                 <field name="active" invisible="1"/>
@@ -13,8 +13,8 @@
         </field>
     </record>
 
-    <record id="view_mqtt_consumer_form" model="ir.ui.view">
-        <field name="model">mqtt.consumer</field>
+    <record id="view_mqtt_processor_form" model="ir.ui.view">
+        <field name="model">mqtt.processor</field>
         <field name="arch" type="xml">
             <form>
                 <sheet>
@@ -44,8 +44,8 @@
         </field>
     </record>
 
-    <record id="view_mqtt_consumer_search" model="ir.ui.view">
-        <field name="model">mqtt.consumer</field>
+    <record id="view_mqtt_processor_search" model="ir.ui.view">
+        <field name="model">mqtt.processor</field>
         <field name="arch" type="xml">
             <search>
                 <field name="name"/>
@@ -56,12 +56,12 @@
         </field>
     </record>
 
-    <record id="action_mqtt_consumer" model="ir.actions.act_window">
-        <field name="name">Consumers</field>
-        <field name="res_model">mqtt.consumer</field>
+    <record id="action_mqtt_processor" model="ir.actions.act_window">
+        <field name="name">Processors</field>
+        <field name="res_model">mqtt.processor</field>
         <field name="view_mode">tree,form</field>
         <field name="context">{'active_test': False}</field>
     </record>
 
-    <menuitem id="mqtt_consumer_menu" name="Consumers" action="action_mqtt_consumer" parent="mqtt_main_menu"/>
+    <menuitem id="mqtt_processor_menu" name="Processors" action="action_mqtt_processor" parent="mqtt_main_menu"/>
 </odoo>

@@ -8,4 +8,8 @@
     <record id="type_write" model="mqtt.event.type">
         <field name="name">Write</field>
     </record>
+
+    <record id="type_delete" model="mqtt.event.type">
+        <field name="name">Delete</field>
+    </record>
 </odoo>

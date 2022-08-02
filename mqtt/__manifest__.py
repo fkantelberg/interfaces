@@ -15,7 +15,7 @@
         "data/res_config.xml",
         "security/ir.model.access.csv",
         "views/menuitems.xml",
-        "views/mqtt_consumer_views.xml",
+        "views/mqtt_processor_views.xml",
         "views/mqtt_event_views.xml",
         "views/mqtt_message_views.xml",
         "views/mqtt_subscription_views.xml",
@@ -23,7 +23,7 @@
     ],
     "external_dependencies": {
         "python": [
-            "paho.mqtt",
+            "paho-mqtt",
         ],
     },
 }

@@ -39,7 +39,7 @@ class MQTTRunner:
     def __init__(self):
         self.has_mqtt = self._has_mqtt()
         self.subscriptions = set()
-        self.client = mqtt.Client()
+        self.client = None
         self.connect()
         self.running = True
 
@@ -87,6 +87,10 @@ class MQTTRunner:
         if "host" not in cfg:
             _logger.error("Missing host configuration for the MQTT broker")
             return False
+
+        client_id = cfg.get("client_id")
+
+        self.client = mqtt.Client(client_id=client_id, clean_session=not client_id)
 
         self.client.on_message = self._message_callback
         self.client.on_connect = self._connect_callback

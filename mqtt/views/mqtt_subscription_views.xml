@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <record id="view_mqtt_subscription_tree" model="ir.ui.view">
         <field name="model">mqtt.subscription</field>
         <field name="arch" type="xml">
             <tree decoration-muted="not active">
-                <field name="active" invisible="1"/>
-                <field name="topic"/>
-                <field name="qos"/>
+                <field name="active" invisible="1" />
+                <field name="topic" />
+                <field name="qos" />
             </tree>
         </field>
     </record>
@@ -18,9 +17,9 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="topic"/>
-                        <field name="active" widget="boolean_toggle"/>
-                        <field name="qos"/>
+                        <field name="topic" />
+                        <field name="active" widget="boolean_toggle" />
+                        <field name="qos" />
                     </group>
                 </sheet>
             </form>
@@ -31,13 +30,29 @@
         <field name="model">mqtt.subscription</field>
         <field name="arch" type="xml">
             <search>
-                <field name="topic" operator="ilike"/>
-                <separator/>
-                <filter name="qos0" string="At Most Once" domain="[('qos', '=', '0')]"/>
-                <filter name="qos1" string="At Least Once" domain="[('qos', '=', '1')]"/>
-                <filter name="qos2" string="Exactly Once" domain="[('qos', '=', '2')]"/>
+                <field name="topic" operator="ilike" />
+                <separator />
+                <filter
+                    name="qos0"
+                    string="At Most Once"
+                    domain="[('qos', '=', '0')]"
+                />
+                <filter
+                    name="qos1"
+                    string="At Least Once"
+                    domain="[('qos', '=', '1')]"
+                />
+                <filter
+                    name="qos2"
+                    string="Exactly Once"
+                    domain="[('qos', '=', '2')]"
+                />
                 <group expand="1" string="Group By">
-                    <filter string="Quality of Service" name="qos" context="{'group_by': 'qos'}"/>
+                    <filter
+                        string="Quality of Service"
+                        name="qos"
+                        context="{'group_by': 'qos'}"
+                    />
                 </group>
             </search>
         </field>
@@ -50,5 +65,10 @@
         <field name="context">{'active_test': False}</field>
     </record>
 
-    <menuitem id="mqtt_subscription_menu" name="Subscriptions" action="action_mqtt_subscription" parent="mqtt_main_menu"/>
+    <menuitem
+        id="mqtt_subscription_menu"
+        name="Subscriptions"
+        action="action_mqtt_subscription"
+        parent="mqtt_main_menu"
+    />
 </odoo>

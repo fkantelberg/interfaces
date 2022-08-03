@@ -127,13 +127,13 @@ class MQTTMessage(models.Model):
                 pattern.append(r"[^/]*")
             elif part == "#":
                 pattern.append(r".*")
-                return fr"^{r'/'.join(pattern)}$"
+                return rf"^{r'/'.join(pattern)}$"
             elif any(k in part for k in "+#"):
                 return False
             else:
                 pattern.append(part.replace("$", r"\$"))
 
-        return fr"^{r'/'.join(pattern)}$"
+        return rf"^{r'/'.join(pattern)}$"
 
     def _filter_by_subscription(self, subscription):
         """Filter the recordset by the MQTT wildcard"""

@@ -1,14 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <record id="view_mqtt_processor_tree" model="ir.ui.view">
         <field name="model">mqtt.processor</field>
         <field name="arch" type="xml">
             <tree decoration-muted="not active">
-                <field name="active" invisible="1"/>
-                <field name="name"/>
-                <field name="topic"/>
-                <field name="model_id"/>
+                <field name="active" invisible="1" />
+                <field name="name" />
+                <field name="topic" />
+                <field name="model_id" />
             </tree>
         </field>
     </record>
@@ -19,22 +18,26 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="name"/>
-                        <field name="topic"/>
-                        <field name="active" widget="boolean_toggle"/>
-                        <field name="model_id"/>
+                        <field name="name" />
+                        <field name="topic" />
+                        <field name="active" widget="boolean_toggle" />
+                        <field name="model_id" />
                     </group>
 
                     <notebook>
                         <page string="Code">
-                            <field name="code" widget="ace" options="{'mode': 'python'}"/>
+                            <field
+                                name="code"
+                                widget="ace"
+                                options="{'mode': 'python'}"
+                            />
                         </page>
                         <page string="Help">
                             <div style="margin-top: 4px;">
                                 <h3>Help with Python expressions</h3>
                                 <p>
                                     The following variables are additionally defined:
-                                    <field name="help_text"/>
+                                    <field name="help_text" />
                                 </p>
                             </div>
                         </page>
@@ -48,10 +51,10 @@
         <field name="model">mqtt.processor</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name"/>
-                <field name="topic" operator="ilike"/>
-                <field name="model_id"/>
-                <field name="user_id"/>
+                <field name="name" />
+                <field name="topic" operator="ilike" />
+                <field name="model_id" />
+                <field name="user_id" />
             </search>
         </field>
     </record>
@@ -63,5 +66,10 @@
         <field name="context">{'active_test': False}</field>
     </record>
 
-    <menuitem id="mqtt_processor_menu" name="Processors" action="action_mqtt_processor" parent="mqtt_main_menu"/>
+    <menuitem
+        id="mqtt_processor_menu"
+        name="Processors"
+        action="action_mqtt_processor"
+        parent="mqtt_main_menu"
+    />
 </odoo>

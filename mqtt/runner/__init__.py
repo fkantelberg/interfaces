@@ -43,8 +43,9 @@ class WorkerMQTTRunner(server.Worker):
 
     def signal_handler(self, sig, frame):
         _logger.debug("WorkerMQTTRunner (%s) received signal %s", self.pid, sig)
-        super().signal_handler(sig, frame)
+        res = super().signal_handler(sig, frame)
         self.runner.stop()
+        return res
 
     def process_work(self):
         _logger.debug("WorkerMQTTRunner (%s) starting up", self.pid)

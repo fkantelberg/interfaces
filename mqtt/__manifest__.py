@@ -6,7 +6,7 @@
     "summary": "MQTT Client and Framework",
     "license": "AGPL-3",
     "version": "15.0.1.0.0",
-    "website": "https://github.com/fkantelberg/iot",
+    "website": "https://github.com/OCA/server-auth",
     "author": "initOS GmbH",
     "depends": ["base_setup"],
     "data": [

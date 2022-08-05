@@ -18,23 +18,47 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="model" invisible="1" />
-                        <field name="topic" />
-                        <field name="active" widget="boolean_toggle" />
-                        <field name="qos" />
-                        <field name="retain" />
-                        <field name="model_id" />
-                        <field
-                            name="field_ids"
-                            widget="many2many_tags"
-                            attrs="{'invisible': [('model_id', '=', False)]}"
-                        />
-                        <field
-                            name="type_ids"
-                            widget="many2many_tags"
-                            attrs="{'invisible': [('model_id', '=', False)]}"
-                        />
+                        <group>
+                            <field name="model" invisible="1" />
+                            <field name="topic" />
+                            <field name="model_id" />
+                            <field
+                                name="field_ids"
+                                widget="many2many_tags"
+                                attrs="{'invisible': [('model_id', '=', False)]}"
+                            />
+                            <field
+                                name="type_ids"
+                                widget="many2many_tags"
+                                attrs="{'invisible': [('model_id', '=', False)]}"
+                            />
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle" />
+                            <field name="mapping" />
+                            <field name="qos" />
+                            <field name="retain" />
+                        </group>
                     </group>
+
+                    <notebook attrs="{'invisible': [('model_id', '=', False)]}">
+                        <page string="Code" attrs="{'invisible': [('mapping', '!=', 'code')]}">
+                            <field
+                                name="code"
+                                widget="ace"
+                                options="{'mode': 'python'}"
+                            />
+                        </page>
+                        <page string="Help" attrs="{'invisible': [('mapping', '!=', 'code')]}">
+                            <div style="margin-top: 4px;">
+                                <h3>Help with Python expressions</h3>
+                                <p>
+                                    The following variables are additionally defined:
+                                    <field name="help_text" />
+                                </p>
+                            </div>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -65,6 +89,17 @@
         </field>
     </record>
 
+    <record id="view_mqtt_event_type_tree" model="ir.ui.view">
+        <field name="model">mqtt.event.type</field>
+        <field name="arch" type="xml">
+            <tree create="false" editable="bottom">
+                <field name="name" />
+                <field name="code" />
+                <field name="model_ids" widget="many2many_tags" />
+            </tree>
+        </field>
+    </record>
+
     <record id="action_mqtt_event" model="ir.actions.act_window">
         <field name="name">MQTT Event</field>
         <field name="res_model">mqtt.event</field>
@@ -72,10 +107,23 @@
         <field name="context">{'active_test': False}</field>
     </record>
 
+    <record id="action_mqtt_event_type" model="ir.actions.act_window">
+        <field name="name">MQTT Event Type</field>
+        <field name="res_model">mqtt.event.type</field>
+        <field name="view_mode">tree</field>
+    </record>
+
     <menuitem
         id="mqtt_event_menu"
         name="Events"
         action="action_mqtt_event"
+        parent="mqtt_main_menu"
+    />
+
+    <menuitem
+        id="mqtt_event_type_menu"
+        name="Event Types"
+        action="action_mqtt_event_type"
         parent="mqtt_main_menu"
     />
 </odoo>

@@ -56,10 +56,11 @@ class Base(models.AbstractModel):
 
         domain = [("model", "=", self._name), ("type_ids", "=", etype.id)]
         for event in self.env["mqtt.event"].sudo().search(domain):
-            fields = event.mapped("field_ids.name") + ["create_date", "create_uid"]
+            fields = set(event.mapped("field_ids.name"))
+            fields.update(["create_date", "create_uid"])
             self.sudo().mqtt_publish(
-                event.topic,
-                payload=records.read(fields),
+                event.convert_topic(etype),
+                payload=event.to_payload(records, fields),
                 qos=event.qos,
                 retain=event.retain,
             )
@@ -82,8 +83,8 @@ class Base(models.AbstractModel):
             if fields:
                 fields.update(("write_date", "write_uid"))
                 self.sudo().mqtt_publish(
-                    event.topic,
-                    payload=self.read(fields),
+                    event.convert_topic(etype),
+                    payload=event.to_payload(self, fields),
                     qos=event.qos,
                     retain=event.retain,
                 )
@@ -91,22 +92,21 @@ class Base(models.AbstractModel):
         return res
 
     def unlink(self):
-        res = super().unlink()
         if self.mqtt_blacklisted():
-            return res
+            return super().unlink()
 
         # Generate messages for defined events
         etype = self.sudo().env.ref("mqtt.type_delete", False)
         if not etype:
-            return res
+            return super().unlink()
 
         domain = [("model", "=", self._name), ("type_ids", "=", etype.id)]
         for event in self.env["mqtt.event"].sudo().search(domain):
             self.sudo().mqtt_publish(
-                event.topic,
-                payload=self.ids,
+                event.convert_topic(etype),
+                payload=event.to_payload(self),
                 qos=event.qos,
                 retain=event.retain,
             )
 
-        return res
+        return super().unlink()

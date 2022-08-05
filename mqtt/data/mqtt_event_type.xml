@@ -2,13 +2,16 @@
 <odoo>
     <record id="type_create" model="mqtt.event.type">
         <field name="name">Create</field>
+        <field name="code">create</field>
     </record>
 
     <record id="type_write" model="mqtt.event.type">
         <field name="name">Write</field>
+        <field name="code">write</field>
     </record>
 
     <record id="type_delete" model="mqtt.event.type">
         <field name="name">Delete</field>
+        <field name="code">delete</field>
     </record>
 </odoo>

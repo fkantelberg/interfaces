@@ -25,8 +25,19 @@ class Base(models.AbstractModel):
         return self._name.startswith("ir.") or self._name == "mqtt.message"
 
     @api.model
-    def mqtt_publish(self, topic, payload, qos="0", retain=False, enqueue=True):
+    def mqtt_publish(
+        self,
+        topic,
+        payload,
+        qos="0",
+        retain=False,
+        enqueue=True,
+        skip_empty_payload=False,
+    ):
         """Helper function to publish a new message"""
+        if skip_empty_payload and not payload:
+            return self.env["mqtt.message"].browse()
+
         if not isinstance(payload, str):
             payload = json.dumps(payload, cls=Encoder)
 
@@ -63,6 +74,7 @@ class Base(models.AbstractModel):
                 payload=event.to_payload(records, fields),
                 qos=event.qos,
                 retain=event.retain,
+                skip_empty_payload=True,
             )
 
         return records
@@ -87,6 +99,7 @@ class Base(models.AbstractModel):
                     payload=event.to_payload(self, fields),
                     qos=event.qos,
                     retain=event.retain,
+                    skip_empty_payload=True,
                 )
 
         return res
@@ -107,6 +120,7 @@ class Base(models.AbstractModel):
                 payload=event.to_payload(self),
                 qos=event.qos,
                 retain=event.retain,
+                skip_empty_payload=True,
             )
 
         return super().unlink()

@@ -23,6 +23,11 @@
                             <field name="topic" />
                             <field name="model_id" />
                             <field
+                                name="filter_id"
+                                domain="[('model_id', '=', model_id)]"
+                                attrs="{'invisible': [('model_id', '=', False)]}"
+                            />
+                            <field
                                 name="field_ids"
                                 widget="many2many_tags"
                                 attrs="{'invisible': [('model_id', '=', False)]}"
@@ -42,14 +47,20 @@
                     </group>
 
                     <notebook attrs="{'invisible': [('model_id', '=', False)]}">
-                        <page string="Code" attrs="{'invisible': [('mapping', '!=', 'code')]}">
+                        <page
+                            string="Code"
+                            attrs="{'invisible': [('mapping', '!=', 'code')]}"
+                        >
                             <field
                                 name="code"
                                 widget="ace"
                                 options="{'mode': 'python'}"
                             />
                         </page>
-                        <page string="Help" attrs="{'invisible': [('mapping', '!=', 'code')]}">
+                        <page
+                            string="Help"
+                            attrs="{'invisible': [('mapping', '!=', 'code')]}"
+                        >
                             <div style="margin-top: 4px;">
                                 <h3>Help with Python expressions</h3>
                                 <p>

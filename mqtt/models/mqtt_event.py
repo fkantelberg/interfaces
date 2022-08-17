@@ -55,6 +55,7 @@ class MQTTEvent(models.Model):
     )
     mapping = fields.Selection("_get_mappings", default="simple", required=True)
     model = fields.Char("Model Name", related="model_id.model", store=True, index=True)
+    filter_id = fields.Many2one("ir.filters")
     field_ids = fields.Many2many(
         "ir.model.fields",
         domain="[('model_id', '=', model_id), ('relation', '=', False)]",
@@ -120,6 +121,10 @@ class MQTTEvent(models.Model):
 
     def to_payload(self, records, fields=None):
         self.ensure_one()
+
+        if self.filter_id:
+            records = records.filtered_domain(self.filter_id._get_eval_domain())
+
         if not fields:
             fields = {"id", "create_date", "write_date", "create_uid", "write_uid"}
             fields.update(self.mapped("field_ids.name"))

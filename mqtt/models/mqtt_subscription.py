@@ -10,3 +10,7 @@ class MQTTSubscription(models.Model):
     _description = _("MQTT Subscriptions")
 
     active = fields.Boolean(default=True)
+    topic = fields.Char(
+        help="The topic under which messages will get published. Use {client} to "
+        "insert the ID of the MQTT client",
+    )

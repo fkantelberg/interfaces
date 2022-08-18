@@ -2,10 +2,11 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 import logging
+from uuid import uuid4
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
-from odoo.tools import safe_eval
+from odoo.tools import config, safe_eval
 
 _logger = logging.getLogger(__name__)
 
@@ -51,7 +52,8 @@ class MQTTEvent(models.Model):
     active = fields.Boolean(default=False, copy=False)
     topic = fields.Char(
         help="The topic under which messages will get published. Use {code} to "
-        "insert the code form the event type",
+        "insert the code from the event type. Use {client} to insert the ID of the "
+        "MQTT client",
     )
     mapping = fields.Selection("_get_mappings", default="simple", required=True)
     model = fields.Char("Model Name", related="model_id.model", store=True, index=True)
@@ -115,7 +117,11 @@ class MQTTEvent(models.Model):
 
     def convert_topic(self, event_type):
         self.ensure_one()
-        return self.topic.replace("{code}", event_type.code)
+        topic = self.topic.replace("{code}", event_type.code)
+        # If no client_id isn't set just generate new onces
+        client_id = config.misc.get("mqtt", {}).get("client_id")
+        topic = topic.replace("{client}", client_id or str(uuid4()))
+        return topic
 
     def to_payload(self, records, fields=None):
         self.ensure_one()

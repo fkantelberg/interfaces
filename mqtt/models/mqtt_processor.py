@@ -3,7 +3,7 @@
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
-from odoo.tools import safe_eval
+from odoo.tools import config, safe_eval
 
 
 class MQTTProcessor(models.Model):
@@ -45,6 +45,7 @@ class MQTTProcessor(models.Model):
     def default_variables(self):
         """Informations about the available variables in the python code"""
         return {
+            "client_id": "The ID of the MQTT client",
             "env": "Odoo Environment on which the processing is triggered",
             "messages": "The messages to process",
             "model": "Odoo Model on whoch the processing is triggered",
@@ -59,6 +60,7 @@ class MQTTProcessor(models.Model):
     def _get_eval_context(self):
         self.ensure_one()
         return {
+            "client_id": config.misc.get("mqtt", {}).get("client_id"),
             "datetime": safe_eval.datetime,
             "env": self.env(user=self.user_id),
             "model": self._get_model(),

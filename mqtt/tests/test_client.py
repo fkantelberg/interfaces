@@ -4,8 +4,8 @@
 from unittest.mock import MagicMock
 
 from odoo import api
-from odoo.tools import config
 from odoo.tests import TransactionCase
+from odoo.tools import config
 
 from ..runner.client import MQTTRunner, to_bool
 

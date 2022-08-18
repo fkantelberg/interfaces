@@ -4,18 +4,31 @@
 from unittest.mock import MagicMock
 
 from odoo import api
+from odoo.tools import config
 from odoo.tests import TransactionCase
 
-from ..runner.client import MQTTRunner
+from ..runner.client import MQTTRunner, to_bool
 
 
-class TestConfig(TransactionCase):
+class TestClient(TransactionCase):
     def setUp(self):
         super().setUp()
         self.runner = MQTTRunner()
         self.runner.subscriptions.add("odoo/#")
         self.runner.cursor = MagicMock()
         self.runner.cursor.return_value.__enter__.return_value = self.env.cr
+
+    def test_bool(self):
+        self.assertTrue(to_bool(1))
+        self.assertTrue(to_bool(True))
+        self.assertTrue(to_bool("TrUe"))
+        self.assertTrue(to_bool("1"))
+        self.assertTrue(to_bool("yes"))
+        self.assertFalse(to_bool(0))
+        self.assertFalse(to_bool(False))
+        self.assertFalse(to_bool("FALSE"))
+        self.assertFalse(to_bool("invalid"))
+        self.assertFalse(to_bool(""))
 
     def test_context(self):
         with self.runner.env() as env:
@@ -48,6 +61,7 @@ class TestConfig(TransactionCase):
         self.assertFalse(self.runner.subscriptions)
 
     def test_publish(self):
+        self.runner.client = MagicMock()
         mock = self.runner.client.publish = MagicMock()
         mock.return_value.rc = 0
 
@@ -75,6 +89,7 @@ class TestConfig(TransactionCase):
 
     def test_subscription(self):
         ret = 0, None
+        self.runner.client = MagicMock()
         subscribe = self.runner.client.subscribe = MagicMock(return_value=ret)
         unsubscribe = self.runner.client.unsubscribe = MagicMock(return_value=ret)
 
@@ -86,3 +101,14 @@ class TestConfig(TransactionCase):
         self.runner.subscribe()
         subscribe.assert_called_once()
         self.assertEqual(self.runner.subscriptions, {"odoo/testing/#"})
+
+    def test_connect(self):
+        config.misc["mqtt"] = {
+            "host": "abc",
+            "username": "tester",
+            "will_topic": "dying",
+        }
+        self.assertTrue(self.runner.connect())
+
+        config.misc["mqtt"] = {}
+        self.assertFalse(self.runner.connect())

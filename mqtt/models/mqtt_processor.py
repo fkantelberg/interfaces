@@ -54,7 +54,7 @@ class MQTTProcessor(models.Model):
 
     def _get_model(self):
         self.ensure_one()
-        return self.env[self.model_id.model]
+        return self.env[self.model_id.model].with_user(self.user_id)
 
     def _get_eval_context(self):
         self.ensure_one()

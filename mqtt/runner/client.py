@@ -112,6 +112,7 @@ class MQTTRunner:
             port=cfg.get("port", 1883),
             keepalive=int(cfg.get("keepalive", 60)),
         )
+        return True
 
     def publish(self):
         """Publish new messages on the bus"""

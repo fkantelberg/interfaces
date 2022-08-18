@@ -24,7 +24,7 @@
                             <field name="model_id" />
                             <field
                                 name="filter_id"
-                                domain="[('model_id', '=', model_id)]"
+                                domain="[('model_id', '=', model)]"
                                 attrs="{'invisible': [('model_id', '=', False)]}"
                             />
                             <field

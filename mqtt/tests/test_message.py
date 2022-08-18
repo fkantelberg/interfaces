@@ -32,6 +32,15 @@ class TestMessage(TransactionCase):
             {"topic": "incoming/testing/a", "direction": "incoming"}
         )
 
+    def _create_processor(self):
+        return self.env["mqtt.processor"].create(
+            {
+                "name": "Testing processor",
+                "model_id": self.env.ref("base.model_res_partner").id,
+                "topic": "testing/#",
+            }
+        )
+
     def topic_test(self, messages, wildcard, size):
         self.assertEqual(len(messages._filter_by_subscription(wildcard)), size)
 
@@ -75,6 +84,14 @@ class TestMessage(TransactionCase):
         msg._compute_subscriber()
         self.assertEqual(msg.subscriber, 2)
 
+        proc = self._create_processor()
+        msg._compute_subscriber()
+        self.assertEqual(msg.subscriber, 3)
+
+        proc.topic = "invalid"
+        msg._compute_subscriber()
+        self.assertEqual(msg.subscriber, 2)
+
     def test_gc(self):
         icp = self.env["ir.config_parameter"].sudo()
         icp.set_param("mqtt.message_vacuum", "")
@@ -109,6 +126,23 @@ class TestMessage(TransactionCase):
         self.messages._run_mqtt_router()
 
         self.messages.env.cr.commit.assert_called_once()
+        self.messages.env.cr.rollback.assert_called_once()
+
+    def test_mqtt_router_processor(self):
+        self.messages.env.cr.commit = MagicMock()
+        self.messages.env.cr.rollback = MagicMock()
+        proc = self._create_processor()
+        proc.topic = "proc/#"
+        self.messages.write(
+            {"state": "enqueued", "direction": "incoming", "topic": "proc/abc"}
+        )
+        self.messages._run_mqtt_router()
+
+        self.messages.env.cr.commit.assert_called_once()
+
+        proc.code = "raise UserError('abc')"
+        self.messages.write({"state": "enqueued", "direction": "incoming"})
+        self.messages._run_mqtt_router()
         self.messages.env.cr.rollback.assert_called_once()
 
     def test_publish(self):

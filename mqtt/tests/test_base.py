@@ -36,6 +36,17 @@ class TestBase(TransactionCase):
                 "field_ids": [(6, 0, fields.ids)],
             }
         )
+        self.delete_event = self.env["mqtt.event"].create(
+            {
+                "model_id": self.env.ref("base.model_res_partner").id,
+                "active": True,
+                "topic": "odoo/partner/delete",
+                "type_ids": [
+                    (4, self.env.ref("mqtt.type_delete").id),
+                ],
+                "field_ids": [(6, 0, fields.ids)],
+            }
+        )
 
     def test_event_create(self):
         before = self.env["mqtt.message"].search_count([])
@@ -49,6 +60,23 @@ class TestBase(TransactionCase):
         self.env["ir.model.data"].search(domain).unlink()
         before = self.env["mqtt.message"].search_count([])
         self.partner.create({"name": "Test"})
+        after = self.env["mqtt.message"].search_count([])
+        self.assertEqual(after, before)
+
+    def test_event_delete(self):
+        p = self.partner.create({"name": "Test"})
+        before = self.env["mqtt.message"].search_count([])
+        p.unlink()
+        after = self.env["mqtt.message"].search_count([])
+        self.assertTrue(after > before)
+
+    def test_event_delete_deleted(self):
+        # Can happen during installation of modules
+        p = self.partner.create({"name": "Test"})
+        domain = [("name", "=", "type_delete"), ("module", "=", "mqtt")]
+        self.env["ir.model.data"].search(domain).unlink()
+        before = self.env["mqtt.message"].search_count([])
+        p.unlink()
         after = self.env["mqtt.message"].search_count([])
         self.assertEqual(after, before)
 

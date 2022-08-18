@@ -165,6 +165,7 @@ class MQTTMessage(models.Model):
                     subbed.write({"state": "enqueued"})
                     func(model, subbed.with_context(mqtt_lock=True))
                     subbed.write({"state": "processed", "process_date": now})
+                    # pylint: disable=E8102
                     self.env.cr.commit()
                 except Exception:
                     _logger.exception(f"Failed {model}.{attr}()")
@@ -183,6 +184,7 @@ class MQTTMessage(models.Model):
                 subbed.write({"state": "enqueued"})
                 processor.process(subbed.with_context(mqtt_lock=True))
                 subbed.write({"state": "processed", "process_date": now})
+                # pylint: disable=E8102
                 self.env.cr.commit()
             except Exception as e:
                 _logger.exception(e)

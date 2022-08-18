@@ -99,14 +99,12 @@ class MQTTEvent(models.Model):
 
     @api.onchange("model_id")
     def _onchange_model(self):
-        if not self.model_id:
-            return
-
-        model = self.env[self.model_id.model]
-        if model.mqtt_blacklisted():
-            raise ValidationError(
-                _("Model is blacklisted and can't be used for an event")
-            )
+        if self.model_id:
+            model = self.env[self.model_id.model]
+            if model.mqtt_blacklisted():
+                raise ValidationError(
+                    _("Model is blacklisted and can't be used for an event")
+                )
 
     def _get_eval_context(self):
         self.ensure_one()

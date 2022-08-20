@@ -6,7 +6,7 @@ from uuid import uuid4
 
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
-from odoo.tools import config, safe_eval
+from odoo.tools import safe_eval
 
 _logger = logging.getLogger(__name__)
 
@@ -119,8 +119,9 @@ class MQTTEvent(models.Model):
         self.ensure_one()
         topic = self.topic.replace("{code}", event_type.code)
         # If no client_id isn't set just generate new onces
-        client_id = config.misc.get("mqtt", {}).get("client_id")
-        topic = topic.replace("{client}", client_id or str(uuid4()))
+        icp = self.env["ir.config_parameter"].sudo()
+        client_id = icp.get_param("mqtt.uuid", str(uuid4()))
+        topic = topic.replace("{client}", client_id)
         return topic
 
     def to_payload(self, records, fields=None):

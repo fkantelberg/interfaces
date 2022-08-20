@@ -3,7 +3,7 @@
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
-from odoo.tools import config, safe_eval
+from odoo.tools import safe_eval
 
 
 class MQTTProcessor(models.Model):
@@ -59,8 +59,9 @@ class MQTTProcessor(models.Model):
 
     def _get_eval_context(self):
         self.ensure_one()
+        icp = self.env["ir.config_parameter"].sudo()
         return {
-            "client_id": config.misc.get("mqtt", {}).get("client_id"),
+            "client_id": icp.get_param("mqtt.uuid", None),
             "datetime": safe_eval.datetime,
             "env": self.env(user=self.user_id),
             "model": self._get_model(),

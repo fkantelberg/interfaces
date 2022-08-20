@@ -3,6 +3,7 @@
 
 import json
 import logging
+from collections import defaultdict
 from datetime import datetime, timedelta
 
 from odoo import _, api, fields, models
@@ -59,6 +60,7 @@ class MQTTMessage(models.Model):
         store=False,
         help="The number of subscribed functions to the topic of the message",
     )
+    subscriptions = fields.Html(compute="_compute_subscription", translate=False)
 
     @api.onchange("topic")
     def _onchange_topic(self):
@@ -83,6 +85,30 @@ class MQTTMessage(models.Model):
 
         for rec, counter in subs.items():
             rec.subscriber = counter
+
+    def _compute_subscription(self):
+        """Counter the number of subscriber for a message"""
+        subs = {rec: defaultdict(set) for rec in self}
+
+        # Subscribing only works for incoming messages
+        messages = self.filtered_domain([("direction", "=", "incoming")])
+        for _model, _attr, func in self._mqtt_functions():
+            subbed = messages._filter_by_subscription(func._mqtt)
+            for rec in subbed:
+                subs[rec][_("API")].add(func._mqtt)
+
+        for processor in self.env["mqtt.processor"].search([]):
+            subbed = messages._filter_by_subscription(processor.topic)
+            for rec in subbed:
+                subs[rec][_("Processor")].add(processor.topic)
+
+        for rec, subscriptions in subs.items():
+            content = ""
+            for title, topics in sorted(subscriptions.items()):
+                content += f'<div class="o_horizontal_separator">{title}</div><ul>'
+                content += "".join(f"<li>{t}</li>" for t in topics)
+                content += "</ul>"
+            rec.subscriptions = content
 
     def json(self):
         """Interpret the payload as json"""

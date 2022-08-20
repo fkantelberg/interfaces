@@ -44,9 +44,14 @@
                         </group>
                     </group>
 
-                    <group string="Payload">
-                        <field name="payload" nolabel="1" />
-                    </group>
+                    <notebook>
+                        <page string="Payload">
+                            <field name="payload" />
+                        </page>
+                        <page string="Subscriptions">
+                            <field name="subscriptions" />
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

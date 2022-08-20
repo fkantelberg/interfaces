@@ -3,6 +3,7 @@
 
 from . import (
     base,
+    ir_config_parameter,
     mqtt_base,
     mqtt_event,
     mqtt_message,

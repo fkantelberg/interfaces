@@ -88,9 +88,13 @@ class MQTTRunner:
             _logger.error("Missing host configuration for the MQTT broker")
             return False
 
-        client_id = cfg.get("client_id")
+        with self.cursor() as cr:
+            cr.execute("SELECT value FROM ir_config_parameter WHERE key = 'mqtt.uuid'")
+            row = cr.fetchone()
 
-        self.client = mqtt.Client(client_id=client_id, clean_session=not client_id)
+        self.client_id = row[0] if row else None
+        _logger.info(f"MQTT Client ID: {self.client_id}")
+        self.client = mqtt.Client(client_id=self.client_id, clean_session=False)
 
         self.client.on_message = self._message_callback
         self.client.on_connect = self._connect_callback

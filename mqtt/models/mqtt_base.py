@@ -1,7 +1,13 @@
 # © 2022 Florian Kantelberg - initOS GmbH
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+import inspect
+
 from odoo import _, fields, models
+
+
+def is_mqtt(func):
+    return callable(func) and getattr(func, "_mqtt", False)
 
 
 class MQTTBase(models.AbstractModel):
@@ -19,3 +25,8 @@ class MQTTBase(models.AbstractModel):
 
     topic = fields.Char(required=True)
     qos = fields.Selection("_get_qos", "Quality of Service", default="0")
+
+    def _mqtt_functions(self):
+        for model in self.env.values():
+            for attr, func in inspect.getmembers(type(model), is_mqtt):
+                yield model, attr, func

@@ -1,7 +1,6 @@
 # © 2022 Florian Kantelberg - initOS GmbH
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-import inspect
 import json
 import logging
 from datetime import datetime, timedelta
@@ -12,10 +11,6 @@ from odoo.exceptions import AccessDenied, ValidationError
 _logger = logging.getLogger(__name__)
 
 DEFAULT_GC_HOURS = 12
-
-
-def is_mqtt(func):
-    return callable(func) and getattr(func, "_mqtt", False)
 
 
 class MQTTMessage(models.Model):
@@ -76,13 +71,10 @@ class MQTTMessage(models.Model):
 
         # Subscribing only works for incoming messages
         messages = self.filtered_domain([("direction", "=", "incoming")])
-        for model in self.sudo().env.values():
-            for attr, func in inspect.getmembers(type(model), is_mqtt):
-                _logger.debug(f"Calling {model}.{attr}()")
-
-                subbed = messages._filter_by_subscription(func._mqtt)
-                for rec in subbed:
-                    subs[rec] += 1
+        for _model, _attr, func in self._mqtt_functions():
+            subbed = messages._filter_by_subscription(func._mqtt)
+            for rec in subbed:
+                subs[rec] += 1
 
         for processor in self.env["mqtt.processor"].search([]):
             subbed = messages._filter_by_subscription(processor.topic)
@@ -151,25 +143,24 @@ class MQTTMessage(models.Model):
 
     def _run_mqtt_router_api(self, messages):
         now = datetime.now()
-        for model in self.env.values():
-            for attr, func in inspect.getmembers(type(model), is_mqtt):
-                _logger.debug(f"Calling {model}.{attr}()")
+        for model, attr, func in self._mqtt_functions():
+            _logger.debug(f"Calling {model}.{attr}()")
 
-                subbed = messages._filter_by_subscription(func._mqtt)
-                if not subbed:
-                    continue
+            subbed = messages._filter_by_subscription(func._mqtt)
+            if not subbed:
+                continue
 
-                try:
-                    # Make the messages appear to be newly received if
-                    # multiple routes are used for the same message
-                    subbed.write({"state": "enqueued"})
-                    func(model, subbed.with_context(mqtt_lock=True))
-                    subbed.write({"state": "processed", "process_date": now})
-                    # pylint: disable=E8102
-                    self.env.cr.commit()
-                except Exception:
-                    _logger.exception(f"Failed {model}.{attr}()")
-                    self.env.cr.rollback()
+            try:
+                # Make the messages appear to be newly received if
+                # multiple routes are used for the same message
+                subbed.write({"state": "enqueued"})
+                func(model, subbed.with_context(mqtt_lock=True))
+                subbed.write({"state": "processed", "process_date": now})
+                # pylint: disable=E8102
+                self.env.cr.commit()
+            except Exception:
+                _logger.exception(f"Failed {model}.{attr}()")
+                self.env.cr.rollback()
 
     def _run_mqtt_router_processor(self, messages):
         now = datetime.now()

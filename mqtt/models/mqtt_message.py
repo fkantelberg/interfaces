@@ -35,8 +35,8 @@ class MQTTMessage(models.Model):
 
     state = fields.Selection("_get_states", required=True, default="draft")
     direction = fields.Selection("_get_directions", default="outgoing", readonly=True)
-    enqueue_date = fields.Datetime(readonly=True)
-    process_date = fields.Datetime(readonly=True)
+    enqueue_date = fields.Datetime("Enqueued on", readonly=True)
+    process_date = fields.Datetime("Processed on", readonly=True)
     topic = fields.Char(
         readonly=True,
         states={"draft": [("readonly", False)]},

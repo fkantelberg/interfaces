@@ -29,11 +29,12 @@
                                 </div>
                             </div>
                             <div class="o_setting_right_pane">
-                                <label for="mqtt_gc_hours" string="Hours" />
+
+                                <label for="mqtt_gc_hours" string="Duration" />
                                 <div class="text-muted">
                                     Processed messages will automatically removed after this time
                                 </div>
-                                <field name="mqtt_gc_hours" />
+                                <field name="mqtt_gc_hours" /> Hours
                             </div>
                         </div>
                     </div>

@@ -70,6 +70,7 @@ class MQTTEvent(models.Model):
         help="The type of the event to listen for the given model",
     )
     retain = fields.Boolean(default=False)
+    changes_only = fields.Boolean(default=True)
     help_text = fields.Html(compute="_compute_help_text", readonly=True, store=False)
     code = fields.Text(default=lambda self: self._get_default_code())
 

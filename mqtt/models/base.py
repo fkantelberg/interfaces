@@ -91,7 +91,10 @@ class Base(models.AbstractModel):
 
         domain = [("model", "=", self._name), ("type_ids", "=", etype.id)]
         for event in self.env["mqtt.event"].sudo().search(domain):
-            fields = set(vals).intersection(event.mapped("field_ids.name"))
+            fields = set(event.mapped("field_ids.name"))
+            if event.changes_only:
+                fields = fields.intersection(vals)
+
             if fields:
                 fields.update(("write_date", "write_uid"))
                 self.sudo().mqtt_publish(

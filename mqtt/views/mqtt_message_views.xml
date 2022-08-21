@@ -37,7 +37,10 @@
                         </group>
                         <group>
                             <field name="direction" />
-                            <field name="subscriber" />
+                            <field
+                                name="subscriber"
+                                attrs="{'invisible': [('direction', '!=', 'incoming')]}"
+                            />
                             <field name="create_date" />
                             <field name="enqueue_date" />
                             <field name="process_date" />
@@ -48,7 +51,10 @@
                         <page string="Payload">
                             <field name="payload" />
                         </page>
-                        <page string="Subscriptions">
+                        <page
+                            string="Subscriptions"
+                            attrs="{'invisible': [('direction', '!=', 'incoming')]}"
+                        >
                             <field name="subscriptions" />
                         </page>
                     </notebook>

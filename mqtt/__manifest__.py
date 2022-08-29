@@ -21,6 +21,9 @@
         "views/mqtt_subscription_views.xml",
         "views/res_config_settings_views.xml",
     ],
+    "demo": [
+        "demo/demo_partner.xml",
+    ],
     "external_dependencies": {
         "python": [
             "paho-mqtt",

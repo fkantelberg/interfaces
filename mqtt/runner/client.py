@@ -154,7 +154,7 @@ class MQTTRunner:
     def subscribe(self):
         """Handle the subscription for new topics and unsubscribe old ones"""
         with self.cursor() as cr:
-            cr.execute("SELECT topic, qos FROM mqtt_subscription")
+            cr.execute("SELECT topic, qos FROM mqtt_subscription WHERE active = true")
             subs = dict(cr.fetchall())
 
         # Unsubscribe topics

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <record id="demo_subscription" model="mqtt.subscription">
+        <field name="topic">odoo/partner/#</field>
+        <field name="active" eval="True" />
+    </record>
+
+    <record id="demo_event" model="mqtt.event">
+        <field name="topic">odoo/partner/{code}/{client}</field>
+        <field name="active" eval="True" />
+        <field name="changes_only" eval="False" />
+        <field name="model_id" ref="base.model_res_partner" />
+        <field name="mapping">simple</field>
+        <field
+            name="field_ids"
+            eval="[(6, 0, [
+                ref('base.field_res_partner__name'),
+                ref('base.field_res_partner__street'),
+                ref('base.field_res_partner__street2'),
+                ref('base.field_res_partner__zip'),
+                ref('base.field_res_partner__city'),
+                ref('base.field_res_partner__ref'),
+            ])]"
+        />
+        <field name="type_ids" eval="[(6, 0, [ref('mqtt.type_create'), ref('mqtt.type_write'), ref('mqtt.type_delete')])]" />
+    </record>
+
+    <record id="demo_processor" model="mqtt.processor">
+        <field name="name">Partner Sync</field>
+        <field name="active" eval="True" />
+        <field name="model_id" ref="base.model_res_partner" />
+        <field name="topic">odoo/partner/#</field>
+        <field name="code">
+for msg in messages:
+    if client in msg.topic.split("/"):
+        continue
+
+    for vals in msg.json():
+        ref = vals.get("ref")
+        if not ref:
+            continue
+
+        partner = model.search([("ref", "=", ref)])
+        if not partner:
+            partner.create(vals)
+        else:
+            partner.write(vals)
+        </field>
+    </record>
+</odoo>

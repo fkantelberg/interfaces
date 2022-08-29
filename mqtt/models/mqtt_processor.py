@@ -45,7 +45,7 @@ class MQTTProcessor(models.Model):
     def default_variables(self):
         """Informations about the available variables in the python code"""
         return {
-            "client_id": "The ID of the MQTT client",
+            "client": "The ID of the MQTT client",
             "env": "Odoo Environment on which the processing is triggered",
             "messages": "The messages to process",
             "model": "Odoo Model on whoch the processing is triggered",
@@ -61,7 +61,7 @@ class MQTTProcessor(models.Model):
         self.ensure_one()
         icp = self.env["ir.config_parameter"].sudo()
         return {
-            "client_id": icp.get_param("mqtt.uuid", None),
+            "client": icp.get_param("mqtt.uuid", None),
             "datetime": safe_eval.datetime,
             "env": self.env(user=self.user_id),
             "model": self._get_model(),

@@ -93,6 +93,7 @@ class TestClient(TransactionCase):
         subscribe = self.runner.client.subscribe = MagicMock(return_value=ret)
         unsubscribe = self.runner.client.unsubscribe = MagicMock(return_value=ret)
 
+        self.env["mqtt.subscription"].search([]).unlink()
         self.runner.subscribe()
         unsubscribe.assert_called_once()
         self.assertFalse(self.runner.subscriptions)

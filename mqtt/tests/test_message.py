@@ -24,6 +24,7 @@ class ResPartner(models.Model):
 class TestMessage(TransactionCase):
     def setUp(self):
         super().setUp()
+        self.env["mqtt.processor"].search([]).write({"active": False})
         self.messages = self.env["mqtt.message"]
         self.messages |= self.messages.create({"topic": "testing/a/b/c"})
         self.messages |= self.messages.create({"topic": "testing/a/b/c/d"})
@@ -79,14 +80,21 @@ class TestMessage(TransactionCase):
 
         msg._compute_subscriber()
         self.assertEqual(msg.subscriber, 0)
+        subs = msg.subscriptions
 
         msg.direction = "incoming"
         msg._compute_subscriber()
         self.assertEqual(msg.subscriber, 2)
 
+        msg._compute_subscription()
+        self.assertTrue(len(subs) < len(msg.subscriptions))
+        subs = msg.subscriptions
+
         proc = self._create_processor()
         msg._compute_subscriber()
         self.assertEqual(msg.subscriber, 3)
+        msg._compute_subscription()
+        self.assertTrue(len(subs) < len(msg.subscriptions))
 
         proc.topic = "invalid"
         msg._compute_subscriber()

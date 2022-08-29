@@ -96,6 +96,7 @@ class TestBase(TransactionCase):
         self.assertEqual(after, before)
 
     def test_publish(self):
+        self.env["mqtt.message"].search([]).unlink()
         data = {"i": 0, "f": 0.5, "d": date(2022, 2, 2), "dt": datetime(2022, 2, 2)}
         self.partner.mqtt_publish("odoo/test", data)
         msg = self.env["mqtt.message"].search([], order="create_date DESC", limit=1)

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <record id="demo_subscription" model="mqtt.subscription">
         <field name="topic">odoo/partner/#</field>
@@ -23,7 +22,10 @@
                 ref('base.field_res_partner__ref'),
             ])]"
         />
-        <field name="type_ids" eval="[(6, 0, [ref('mqtt.type_create'), ref('mqtt.type_write'), ref('mqtt.type_delete')])]" />
+        <field
+            name="type_ids"
+            eval="[(6, 0, [ref('mqtt.type_create'), ref('mqtt.type_write'), ref('mqtt.type_delete')])]"
+        />
     </record>
 
     <record id="demo_processor" model="mqtt.processor">

@@ -14,7 +14,7 @@ class TestClient(TransactionCase):
     def setUp(self):
         super().setUp()
         self.runner = MQTTRunner()
-        self.runner.subscriptions.add("odoo/#")
+        self.runner.subscriptions["odoo/#"] = "0"
         self.runner.cursor = MagicMock()
         self.runner.cursor.return_value.__enter__.return_value = self.env.cr
 
@@ -53,10 +53,10 @@ class TestClient(TransactionCase):
         self.assertTrue(after > before)
 
         # Connect/disconnect will reset the subscriptions
-        self.runner.subscriptions.add("odoo/#")
+        self.runner.subscriptions["odoo/#"] = "0"
         self.runner._connect_callback()
         self.assertFalse(self.runner.subscriptions)
-        self.runner.subscriptions.add("odoo/#")
+        self.runner.subscriptions["odoo/#"] = "0"
         self.runner._disconnect_callback()
         self.assertFalse(self.runner.subscriptions)
 
@@ -101,7 +101,7 @@ class TestClient(TransactionCase):
         self.env["mqtt.subscription"].create({"topic": "odoo/testing/#"})
         self.runner.subscribe()
         subscribe.assert_called_once()
-        self.assertEqual(self.runner.subscriptions, {"odoo/testing/#"})
+        self.assertEqual(self.runner.subscriptions, {"odoo/testing/#": "0"})
 
     def test_connect(self):
         config.misc["mqtt"] = {

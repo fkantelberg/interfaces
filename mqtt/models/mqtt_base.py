@@ -24,7 +24,7 @@ class MQTTBase(models.AbstractModel):
         ]
 
     topic = fields.Char(required=True)
-    qos = fields.Selection("_get_qos", "Quality of Service", default="0")
+    qos = fields.Selection("_get_qos", "Quality of Service", default="0", required=True)
 
     def _mqtt_functions(self):
         for model in self.env.values():

@@ -38,7 +38,7 @@ class MQTTRunner:
 
     def __init__(self):
         self.has_mqtt = self._has_mqtt()
-        self.subscriptions = set()
+        self.subscriptions = {}
         self.client = None
         self.connect()
         self.running = True
@@ -61,11 +61,11 @@ class MQTTRunner:
 
     def _connect_callback(self, *_args, **_kwargs):
         _logger.info("Connected to MQTT broker")
-        self.subscriptions = set()
+        self.subscriptions = {}
 
     def _disconnect_callback(self, *_args, **_kwargs):
         _logger.info("Disconnected from MQTT broker")
-        self.subscriptions = set()
+        self.subscriptions = {}
 
     def _message_callback(self, _client, _userdata, message):
         with self.env() as env:
@@ -158,12 +158,15 @@ class MQTTRunner:
             subs = dict(cr.fetchall())
 
         # Unsubscribe topics
-        topics = [topic for topic in self.subscriptions if topic not in subs]
+        topics = [
+            topic for topic, qos in self.subscriptions.items() if subs.get(topic) != qos
+        ]
         if topics:
             result, _ = self.client.unsubscribe(topics)
             if result == mqtt.MQTT_ERR_SUCCESS:
                 _logger.info(f"Unsubscribed from {','.join(sorted(topics))}")
-                self.subscriptions.difference_update(topics)
+                for topic in topics:
+                    self.subscriptions.pop(topic, None)
 
         # Subscribe new topics
         topics = [

@@ -9,6 +9,7 @@ from odoo.tools import safe_eval
 class MQTTProcessor(models.Model):
     _name = "mqtt.processor"
     _description = _("MQTT Processor")
+    _order = "name"
 
     def _get_default_code(self):
         variables = self.default_variables()

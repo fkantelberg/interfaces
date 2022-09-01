@@ -6,9 +6,9 @@
         <field name="inherit_id" ref="base_setup.res_config_settings_view_form" />
         <field name="arch" type="xml">
             <div name="integration" position="after">
-                <div id="mqtt">
+                <div name="mqtt">
                     <h2>MQTT</h2>
-                    <div class="row mt16 o_settings_container" id="mqtt_gc">
+                    <div class="row mt16 o_settings_container">
                         <div class="col-xs-12 col-md-6 o_setting_box" id="mqtt_gc">
                             <div class="o_setting_left_pane">
                                 <field name="mqtt_gc_incoming" />
@@ -29,10 +29,9 @@
                                 </div>
                             </div>
                             <div class="o_setting_right_pane">
-
                                 <label for="mqtt_gc_hours" string="Duration" />
                                 <div class="text-muted">
-                                    Processed messages will automatically removed after this time
+                                    Processed messages will automatically be removed after this time
                                 </div>
                                 <field name="mqtt_gc_hours" /> Hours
                             </div>

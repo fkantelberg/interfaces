@@ -20,8 +20,8 @@ class Base(models.AbstractModel):
 
     @api.model
     def mqtt_blacklisted(self):
-        """Disable the MQTT events for specific models to prevent impact to basic
-        structures"""
+        """Disable the MQTT events for specific models to prevent an impact to basic
+        structures and spam"""
         return self._name.startswith("ir.") or self._name == "mqtt.message"
 
     @api.model
@@ -118,9 +118,10 @@ class Base(models.AbstractModel):
 
         domain = [("model", "=", self._name), ("type_ids", "=", etype.id)]
         for event in self.env["mqtt.event"].sudo().search(domain):
+            fields = set(event.mapped("field_ids.name"))
             self.sudo().mqtt_publish(
                 event.convert_topic(etype),
-                payload=event.to_payload(self),
+                payload=event.to_payload(self, fields),
                 qos=event.qos,
                 retain=event.retain,
                 skip_empty_payload=True,

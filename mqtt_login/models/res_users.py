@@ -19,8 +19,8 @@ class ResUsers(models.Model):
     def _mqtt_login_events(self):
         self.ensure_one()
         payload = {
-            "login": self.login,
             "ip": request.httprequest.environ["REMOTE_ADDR"] if request else "n/a",
+            "login": self.login,
             "login_date": self.login_date,
         }
 
@@ -28,7 +28,7 @@ class ResUsers(models.Model):
         domain = [("model", "=", self._name), ("type_ids", "=", etype.id)]
         for event in self.env["mqtt.event"].search(domain):
             self.mqtt_publish(
-                event.topic,
+                event.convert_topic(etype),
                 payload=payload,
                 qos=event.qos,
                 retain=event.retain,

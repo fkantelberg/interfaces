@@ -14,6 +14,7 @@ _logger = logging.getLogger(__name__)
 class MQTTEventType(models.Model):
     _name = "mqtt.event.type"
     _description = _("MQTT event types")
+    _order = "name"
 
     name = fields.Char(required=True, translate=True)
     code = fields.Char(required=True, readonly=True)
@@ -34,8 +35,6 @@ class MQTTEvent(models.Model):
     _name = "mqtt.event"
     _inherit = ["mqtt.base"]
     _description = _("MQTT event to automatically generate messages")
-    _rec_name = "topic"
-    _order = "topic"
 
     def _get_mappings(self):
         return [

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_serializer_tree" model="ir.ui.view">
+        <field name="model">ir.serializer</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="not active">
+                <field name="active" invisible="1" />
+                <field name="name" />
+                <field name="model_id" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_serializer_form" model="ir.ui.view">
+        <field name="model">ir.serializer</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button
+                        type="action"
+                        class="btn-primary"
+                        name="%(serializer_preview_action)d"
+                        string="Preview"
+                        target="new"
+                    />
+                    <button
+                        type="object"
+                        name="action_populate"
+                        string="Populate"
+                        help="Create a mapping with normal fields"
+                    />
+                    <button
+                        type="object"
+                        name="action_populate_fully"
+                        string="Populate Fully"
+                        help="Create a mapping with all fields"
+                    />
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" />
+                        <field name="exporting" widget="boolean_toggle" />
+                        <field name="importing" widget="boolean_toggle" />
+                        <field name="model_id" />
+                        <field name="use_snippet" />
+                    </group>
+
+                    <notebook>
+                        <page string="Fields">
+                            <field name="field_ids">
+                                <tree editable="bottom">
+                                    <field name="serializer_id" invisible="1" />
+                                    <field name="model_id" invisible="1" />
+                                    <field name="related" invisible="1" />
+                                    <field name="field_id" />
+                                    <field name="ttype" />
+                                    <field
+                                        name="related_serializer_id"
+                                        attrs="{'invisible': [('related', '=', False)], 'required': [('related', '=', True)]}"
+                                    />
+                                    <field name="importing" />
+                                    <field name="exporting" />
+                                </tree>
+                            </field>
+                        </page>
+                        <page
+                            string="Matching Domain"
+                            attrs="{'invisible': [('importing', '=', False)]}"
+                        >
+                            <field
+                                name="import_domain"
+                                nolabel="1"
+                                attrs="{'required': [('importing', '=', True)]}"
+                            />
+                        </page>
+                        <page
+                            string="Export Snippet"
+                            attrs="{'invisible': ['|', ('use_snippet', '=', False), ('exporting', '=', False)]}"
+                        >
+                            <field name="export_code" widget="ace" options="{'mode': 'python'}" />
+                        </page>
+                        <page
+                            string="Import Snippet"
+                            attrs="{'invisible': ['|', ('use_snippet', '=', False), ('importing', '=', False)]}"
+                        >
+                            <field name="import_code" widget="ace" nolabel="1" options="{'mode': 'python'}" />
+                        </page>
+                        <page string="Advanced">
+                            <group>
+                                <field name="use_sync_date" />
+                                <field name="raise_on_duplicate" />
+                                <field name="include_empty_keys" />
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_serializer_search" model="ir.ui.view">
+        <field name="model">ir.serializer</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <field name="model_id" />
+            </search>
+        </field>
+    </record>
+
+    <record id="action_serializer" model="ir.actions.act_window">
+        <field name="name">Serializer</field>
+        <field name="res_model">ir.serializer</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'active_test': False}</field>
+    </record>
+
+    <menuitem
+        id="serializer_menu"
+        name="Serializer"
+        action="action_serializer"
+        parent="base.next_id_9"
+    />
+</odoo>

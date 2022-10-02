@@ -2,15 +2,18 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    "name": "MQTT - Login Event",
-    "summary": "Event for the Users model which publishes MQTT messages if a "
-    "user logs in",
+    "name": "MQTT Serializer",
+    "summary": "Make the serializer usable for MQTT",
     "license": "AGPL-3",
     "version": "15.0.1.0.0",
     "website": "https://github.com/OCA/...",
     "author": "initOS GmbH",
-    "depends": ["mqtt"],
+    "depends": ["mqtt", "serializer"],
     "data": [
-        "data/mqtt_event_type.xml",
+        "views/mqtt_processor_views.xml",
+        "views/mqtt_event_views.xml",
+    ],
+    "demo": [
+        # "demo/demo_partner.xml",
     ],
 }

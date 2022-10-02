@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ir_serializer,access_ir_serializer,model_ir_serializer,base.group_system,1,1,1,1
+access_ir_serializer_field,access_ir_serializer_field,model_ir_serializer_field,base.group_system,1,1,1,1
+access_ir_serializer_preview,access_ir_serializer_preview,model_ir_serializer_preview,base.group_system,1,1,1,1

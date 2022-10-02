@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <record id="demo_parent" model="ir.serializer">
+        <field name="name">Demo Parent</field>
+        <field name="model_id" ref="base.model_res_partner" />
+    </record>
+
+    <record id="demo_partner" model="ir.serializer">
+        <field name="name">Demo Partner</field>
+        <field name="model_id" ref="base.model_res_partner" />
+        <field name="use_sync_date" eval="True" />
+    </record>
+
+    <record id="demo_partner_name"  model="ir.serializer.field">
+        <field name="serializer_id" ref="demo_partner" />
+        <field name="field_id" ref="base.field_res_partner__name" />
+    </record>
+
+    <record id="demo_partner_ref"  model="ir.serializer.field">
+        <field name="serializer_id" ref="demo_partner" />
+        <field name="field_id" ref="base.field_res_partner__ref" />
+    </record>
+
+    <record id="demo_partner_street"  model="ir.serializer.field">
+        <field name="serializer_id" ref="demo_partner" />
+        <field name="field_id" ref="base.field_res_partner__street" />
+    </record>
+
+    <record id="demo_partner_street2"  model="ir.serializer.field">
+        <field name="serializer_id" ref="demo_partner" />
+        <field name="field_id" ref="base.field_res_partner__street2" />
+    </record>
+
+    <record id="demo_partner_zip"  model="ir.serializer.field">
+        <field name="serializer_id" ref="demo_partner" />
+        <field name="field_id" ref="base.field_res_partner__zip" />
+    </record>
+
+    <record id="demo_partner_city"  model="ir.serializer.field">
+        <field name="serializer_id" ref="demo_partner" />
+        <field name="field_id" ref="base.field_res_partner__city" />
+    </record>
+
+    <record id="demo_partner_parent"  model="ir.serializer.field">
+        <field name="serializer_id" ref="demo_partner" />
+        <field name="field_id" ref="base.field_res_partner__parent_id" />
+        <field name="serializer_id" ref="demo_partner" />
+    </record>
+</odoo>

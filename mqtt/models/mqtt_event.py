@@ -124,6 +124,17 @@ class MQTTEvent(models.Model):
         topic = topic.replace("{client}", client_id)
         return topic
 
+    def _to_payload(self, records, fields=None):
+        self.ensure_one()
+
+        if self.mapping == "code":
+            context = self._get_eval_context()
+            context.update({"records": records, "fields": fields})
+            safe_eval.safe_eval(self.code, context, mode="exec", nocopy=True)
+            return context.get("result", None)
+
+        return records.read(fields)
+
     def to_payload(self, records, fields=None):
         self.ensure_one()
 
@@ -134,13 +145,7 @@ class MQTTEvent(models.Model):
             fields = {"id", "create_date", "write_date", "create_uid", "write_uid"}
             fields.update(self.mapped("field_ids.name"))
 
-        if self.mapping == "code":
-            context = self._get_eval_context()
-            context.update({"records": records, "fields": fields})
-            safe_eval.safe_eval(self.code, context, mode="exec", nocopy=True)
-            return context.get("result", None)
-
-        return records.read(fields)
+        return self._to_payload(records, fields=fields)
 
     def write(self, vals):
         res = super().write(vals)

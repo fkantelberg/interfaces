@@ -5,15 +5,12 @@
     "name": "MQTT Serializer",
     "summary": "Make the serializer usable for MQTT",
     "license": "AGPL-3",
-    "version": "15.0.1.0.0",
+    "version": "16.0.1.0.0",
     "website": "https://github.com/OCA/...",
     "author": "initOS GmbH",
     "depends": ["mqtt", "serializer"],
     "data": [
         "views/mqtt_processor_views.xml",
         "views/mqtt_event_views.xml",
-    ],
-    "demo": [
-        # "demo/demo_partner.xml",
     ],
 }

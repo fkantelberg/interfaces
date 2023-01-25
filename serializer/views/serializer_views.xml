@@ -77,13 +77,22 @@
                             string="Export Snippet"
                             attrs="{'invisible': ['|', ('use_snippet', '=', False), ('exporting', '=', False)]}"
                         >
-                            <field name="export_code" widget="ace" options="{'mode': 'python'}" />
+                            <field
+                                name="export_code"
+                                widget="ace"
+                                options="{'mode': 'python'}"
+                            />
                         </page>
                         <page
                             string="Import Snippet"
                             attrs="{'invisible': ['|', ('use_snippet', '=', False), ('importing', '=', False)]}"
                         >
-                            <field name="import_code" widget="ace" nolabel="1" options="{'mode': 'python'}" />
+                            <field
+                                name="import_code"
+                                widget="ace"
+                                nolabel="1"
+                                options="{'mode': 'python'}"
+                            />
                         </page>
                         <page string="Advanced">
                             <group>

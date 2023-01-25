@@ -6,7 +6,7 @@
     "summary": "Event for the Users model which publishes MQTT messages if a "
     "user logs in",
     "license": "AGPL-3",
-    "version": "15.0.1.0.0",
+    "version": "16.0.1.0.0",
     "website": "https://github.com/OCA/...",
     "author": "initOS GmbH",
     "depends": ["mqtt"],

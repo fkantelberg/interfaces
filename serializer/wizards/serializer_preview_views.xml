@@ -1,12 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
+<?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
     <record id="view_serializer_preview_form" model="ir.ui.view">
         <field name="model">ir.serializer.preview</field>
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <h3>Preview of <field name="serializer_id" readonly="1" nolabel="1" options="{'no_open': True}" /></h3>
+                    <h3>Preview of <field
+                            name="serializer_id"
+                            readonly="1"
+                            nolabel="1"
+                            options="{'no_open': True}"
+                        /></h3>
                     <group>
                         <field name="exporting" invisible="1" />
                         <field name="importing" invisible="1" />
@@ -16,21 +20,35 @@
                             options="{'hide_model': True, 'no_create': True, 'no_edit': True, 'no_open': True}"
                         />
 
-                        <field name="matching" attrs="{'invisible': [('importing', '=', False)]}" />
+                        <field
+                            name="matching"
+                            attrs="{'invisible': [('importing', '=', False)]}"
+                        />
                         <field name="message" />
                     </group>
 
                     <group>
-                        <group string="Serialized" attrs="{'invisible': [('exporting', '=', False)]}">
+                        <group
+                            string="Serialized"
+                            attrs="{'invisible': [('exporting', '=', False)]}"
+                        >
                             <field name="serialized" nolabel="1" />
                         </group>
-                        <group string="Deserialized" attrs="{'invisible': [('importing', '=', False)]}">
+                        <group
+                            string="Deserialized"
+                            attrs="{'invisible': [('importing', '=', False)]}"
+                        >
                             <field name="deserialized" nolabel="1" />
                         </group>
                     </group>
                 </sheet>
                 <footer>
-                    <button string="Close" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                    <button
+                        string="Close"
+                        class="btn-secondary"
+                        special="cancel"
+                        data-hotkey="z"
+                    />
                 </footer>
             </form>
         </field>

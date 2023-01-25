@@ -345,7 +345,6 @@ class Serializer(models.Model):
                         changes.append((4, rec.id))
                     else:
                         rec_vals = field.related_serializer_id._import_deserialized(val)
-                        print(rec, rec_vals)
                         changes.append((0, 0, rec_vals))
 
                 writable[key] = changes

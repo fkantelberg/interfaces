@@ -111,6 +111,13 @@ class MQTTRunner:
                 retain=to_bool(cfg.get("will_retain", False)),
             )
 
+        if any(map(cfg.get, ("ca_certs", "certfile", "keyfile"))):
+            self.client.tls_set(
+                ca_certs=cfg.get("ca_certs"),
+                certfile=cfg.get("certfile"),
+                keyfile=cfg.get("keyfile"),
+            )
+
         self.client.connect_async(
             cfg["host"],
             port=cfg.get("port", 1883),

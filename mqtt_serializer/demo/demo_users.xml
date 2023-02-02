@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <record id="demo_user_serializer" model="ir.serializer">
+        <field name="name">Demo Users</field>
+        <field name="model_id" ref="base.model_res_users" />
+        <field name="use_snippet" eval="True" />
+        <field name="import_domain">[('login', '=', login)]</field>
+        <field name="export_code">
+result.update(
+    {
+        "login": record.login,
+        "groups": list(record.groups_id.get_external_id().values()),
+    }
+)
+        </field>
+        <field name="import_code">
+groups = []
+for group_ref in content.get("groups", []):
+    group = env.ref(group_ref, False)
+    if group:
+        groups.append(group.id)
+result["groups_id"] = [(6, 0, groups)]
+        </field>
+    </record>
+
+    <record id="demo_subscription" model="mqtt.subscription">
+        <field name="topic">odoo/users/#</field>
+        <field name="active" eval="True" />
+    </record>
+
+    <record id="demo_event" model="mqtt.event">
+        <field name="topic">odoo/users/{code}</field>
+        <field name="active" eval="True" />
+        <field name="changes_only" eval="True" />
+        <field name="model_id" ref="base.model_res_users" />
+        <field name="serializer_id" ref="demo_user_serializer" />
+        <field name="type_ids" eval="[(6, 0, [ref('mqtt.type_write')])]" />
+        <field
+            name="field_ids"
+            eval="[(6, 0, [ref('base.field_res_users__groups_id')])]"
+        />
+    </record>
+
+    <record id="demo_processor" model="mqtt.processor">
+        <field name="name">User Sync</field>
+        <field name="active" eval="True" />
+        <field name="model_id" ref="base.model_res_users" />
+        <field name="topic">odoo/users/#</field>
+        <field name="serializer_id" ref="demo_user_serializer" />
+    </record>
+</odoo>

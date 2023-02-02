@@ -14,6 +14,6 @@
         "views/mqtt_event_views.xml",
     ],
     "demo": [
-        # "demo/demo_partner.xml",
+        "demo/demo_users.xml",
     ],
 }

@@ -13,4 +13,7 @@
         "views/mqtt_processor_views.xml",
         "views/mqtt_event_views.xml",
     ],
+    "demo": [
+        "demo/demo_users.xml",
+    ],
 }

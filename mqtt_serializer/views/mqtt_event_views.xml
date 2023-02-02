@@ -5,7 +5,10 @@
         <field name="inherit_id" ref="mqtt.view_mqtt_event_form" />
         <field name="arch" type="xml">
             <field name="mapping" position="after">
-
+                <field
+                    name="serializer_id"
+                    attrs="{'invisible': [('mapping', '!=', 'serializer')]}"
+                />
             </field>
         </field>
     </record>

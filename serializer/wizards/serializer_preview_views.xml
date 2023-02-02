@@ -32,13 +32,13 @@
                             string="Serialized"
                             attrs="{'invisible': [('exporting', '=', False)]}"
                         >
-                            <field name="serialized" nolabel="1" />
+                            <field name="serialized" nolabel="1" colspan="2" />
                         </group>
                         <group
                             string="Deserialized"
                             attrs="{'invisible': [('importing', '=', False)]}"
                         >
-                            <field name="deserialized" nolabel="1" />
+                            <field name="deserialized" nolabel="1" colspan="2" />
                         </group>
                     </group>
                 </sheet>

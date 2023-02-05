@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="view_serializer_schema_tree" model="ir.ui.view">
+        <field name="model">ir.serializer.schema</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="type" />
+                <field name="required" />
+                <field name="importing" />
+                <field name="exporting" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_serializer_schema_form" model="ir.ui.view">
+        <field name="model">ir.serializer.schema</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="serializer_id" invisible="1" />
+                            <field name="name" />
+                            <field name="type" />
+                            <field
+                                name="str_format"
+                                attrs="{'invisible': [('type', '!=', 'string')]}"
+                            />
+                            <field
+                                name="related_serializer_id"
+                                attrs="{'invisible': [('type', '!=', 'serializer')], 'required': [('type', '=', 'serializer')]}"
+                            />
+                            <field
+                                name="values"
+                                attrs="{'invisible': [('type', '!=', 'selection')]}"
+                            />
+                        </group>
+                        <group>
+                            <field name="required" />
+                            <field name="importing" />
+                            <field name="exporting" />
+                            <field
+                                name="is_list"
+                                attrs="{'invisible': [('type', '!=', 'serializer')]}"
+                            />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

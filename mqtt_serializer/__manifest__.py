@@ -8,7 +8,7 @@
     "version": "16.0.1.0.0",
     "website": "https://github.com/OCA/...",
     "author": "initOS GmbH",
-    "depends": ["mqtt", "serializer"],
+    "depends": ["mqtt", "base_serializer"],
     "data": [
         "views/mqtt_processor_views.xml",
         "views/mqtt_event_views.xml",

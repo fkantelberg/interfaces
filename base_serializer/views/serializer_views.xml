@@ -38,21 +38,26 @@
                 </header>
                 <sheet>
                     <group>
-                        <field name="name" />
-                        <field name="exporting" widget="boolean_toggle" />
-                        <field name="importing" widget="boolean_toggle" />
-                        <field name="model_id" />
-                        <field name="use_snippet" />
+                        <group>
+                            <field name="name" />
+                            <field name="model_id" />
+                        </group>
+                        <group>
+                            <field name="exporting" widget="boolean_toggle" />
+                            <field name="importing" widget="boolean_toggle" />
+                            <field name="use_snippet" />
+                        </group>
                     </group>
 
                     <notebook>
-                        <page string="Fields">
+                        <page name="fields" string="Fields">
                             <field name="field_ids">
                                 <tree editable="bottom">
                                     <field name="serializer_id" invisible="1" />
                                     <field name="model_id" invisible="1" />
                                     <field name="related" invisible="1" />
                                     <field name="field_id" />
+                                    <field name="name" />
                                     <field name="ttype" />
                                     <field
                                         name="related_serializer_id"
@@ -64,16 +69,23 @@
                             </field>
                         </page>
                         <page
+                            name="matching_domain"
                             string="Matching Domain"
                             attrs="{'invisible': [('importing', '=', False)]}"
                         >
-                            <field
-                                name="import_domain"
-                                nolabel="1"
-                                attrs="{'required': [('importing', '=', True)]}"
-                            />
+                            <div>
+                                This domain is used to match the records with the given content.
+                                You can use all fields defined before.
+                            </div>
+                            <group>
+                                <field
+                                    name="import_domain"
+                                    attrs="{'required': [('importing', '=', True)]}"
+                                />
+                            </group>
                         </page>
                         <page
+                            name="export_snippet"
                             string="Export Snippet"
                             attrs="{'invisible': ['|', ('use_snippet', '=', False), ('exporting', '=', False)]}"
                         >
@@ -84,6 +96,7 @@
                             />
                         </page>
                         <page
+                            name="import_snippet"
                             string="Import Snippet"
                             attrs="{'invisible': ['|', ('use_snippet', '=', False), ('importing', '=', False)]}"
                         >
@@ -94,7 +107,7 @@
                                 options="{'mode': 'python'}"
                             />
                         </page>
-                        <page string="Advanced">
+                        <page name="advanced" string="Advanced">
                             <group>
                                 <field name="use_sync_date" />
                                 <field name="raise_on_duplicate" />

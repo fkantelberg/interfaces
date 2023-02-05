@@ -14,5 +14,6 @@
         "views/serializer_views.xml",
         "views/serializer_schema_views.xml",
     ],
+    "auto_install": True,
     "installable": True,
 }

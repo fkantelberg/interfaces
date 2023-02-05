@@ -16,4 +16,5 @@
     "demo": [
         "demo/demo_users.xml",
     ],
+    "auto_install": True,
 }

@@ -16,7 +16,9 @@ class Serializer(restapi.RestMethodParam):
         self.is_list = is_list
 
     def from_params(self, service, params):
-        serializer = service.env["ir.serializer"].find_by_code(self.serializer_code)
+        serializer = (
+            service.env["ir.serializer"].sudo().find_by_code(self.serializer_code)
+        )
         if not serializer:
             raise InternalServerError(_("No serializer"))
 
@@ -42,7 +44,9 @@ class Serializer(restapi.RestMethodParam):
             _logger.error(f"{result} is not a recordset")
             raise InternalServerError(_("Unexpected result"))
 
-        serializer = service.env["ir.serializer"].find_by_code(self.serializer_code)
+        serializer = (
+            service.env["ir.serializer"].sudo().find_by_code(self.serializer_code)
+        )
         if not serializer:
             raise InternalServerError(_("No serializer"))
 
@@ -84,7 +88,9 @@ class Serializer(restapi.RestMethodParam):
         }
 
     def to_json_schema(self, service, spec, direction) -> dict:
-        serializer = service.env["ir.serializer"].find_by_code(self.serializer_code)
+        serializer = (
+            service.env["ir.serializer"].sudo().find_by_code(self.serializer_code)
+        )
         if not serializer:
             return {}
 

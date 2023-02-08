@@ -16,8 +16,6 @@ class SerializerField(models.Model):
         for rec in self:
             fname = rec.name or rec.field_id.name
             field = rec.field_id
-            if field.required:
-                required.add(fname)
 
             if field.ttype == "boolean":
                 schema[fname] = {"type": "boolean"}

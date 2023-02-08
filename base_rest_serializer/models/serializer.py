@@ -34,7 +34,16 @@ class Serializer(models.Model):
         dir_domain = [(direction, "=", True)]
         schemes = self.schema_ids.filtered_domain(dir_domain)
         required = set(schemes.filtered("required").mapped("name"))
-        props = self.field_ids.filtered_domain(dir_domain).to_schema()
+
+        fields = self.field_ids.filtered_domain(dir_domain)
+        props = fields.to_schema()
+
+        required.update(
+            field.name or field.field_id.name
+            for field in fields
+            if field.field_id.required
+        )
+
         props.update(schemes.to_schema())
 
         return {"type": "object", "required": sorted(required), "properties": props}

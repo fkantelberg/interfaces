@@ -429,3 +429,8 @@ class TestSerializer(TransactionCase):
         preview.write({"serialized": False, "deserialized": "test"})
         preview._onchange_deserialized()
         self.assertEqual(preview.deserialized, "test")
+
+    def test_preview_defaults(self):
+        preview = self.env["ir.serializer.preview"]
+
+        self.assertEqual(preview.default_get(["resource_ref"]), {})

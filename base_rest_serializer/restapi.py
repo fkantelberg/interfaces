@@ -60,7 +60,7 @@ class Serializer(restapi.RestMethodParam):
 
         if len(result) != 1:
             _logger.error(f"Expected a recordset wit length 1 or None: {result}")
-            raise BadRequest()
+            raise InternalServerError()
 
         return serializer._serialize(result)
 

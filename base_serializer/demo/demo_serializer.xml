@@ -3,12 +3,24 @@
     <record id="demo_parent" model="ir.serializer">
         <field name="name">Demo Parent</field>
         <field name="model_id" ref="base.model_res_partner" />
+        <field name="import_domain">[('ref', '=', ref)]</field>
+    </record>
+
+    <record id="demo_parent_name" model="ir.serializer.field">
+        <field name="serializer_id" ref="demo_parent" />
+        <field name="field_id" ref="base.field_res_partner__name" />
+    </record>
+
+    <record id="demo_parent_ref" model="ir.serializer.field">
+        <field name="serializer_id" ref="demo_parent" />
+        <field name="field_id" ref="base.field_res_partner__ref" />
     </record>
 
     <record id="demo_partner" model="ir.serializer">
         <field name="name">Demo Partner</field>
         <field name="model_id" ref="base.model_res_partner" />
         <field name="use_sync_date" eval="True" />
+        <field name="import_domain">[('ref', '=', ref)]</field>
     </record>
 
     <record id="demo_partner_name" model="ir.serializer.field">
@@ -43,6 +55,7 @@
 
     <record id="demo_partner_parent" model="ir.serializer.field">
         <field name="serializer_id" ref="demo_partner" />
+        <field name="related_serializer_id" ref="demo_parent" />
         <field name="field_id" ref="base.field_res_partner__parent_id" />
     </record>
 </odoo>

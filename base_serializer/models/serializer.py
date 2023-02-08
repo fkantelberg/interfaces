@@ -36,6 +36,10 @@ class Serializer(models.Model):
         help="Using the deserialized this domain is used to find the matching record. "
         "All fields of the model can be used as variables",
     )
+    base_serializer_id = fields.Many2one(
+        "ir.serializer",
+        help="Base this serializer on another one to reduce redundancy",
+    )
     raise_on_duplicate = fields.Boolean(default=True)
     include_empty_keys = fields.Boolean(default=False)
 
@@ -163,7 +167,11 @@ class Serializer(models.Model):
         if not isinstance(content, dict):
             raise UserError(_("Expected a dictionary"))
 
-        result = {}
+        if self.base_serializer_id:
+            result = self.base_serializer_id._deserialize(content)
+        else:
+            result = {}
+
         for key, value in content.items():
             domain = [
                 ("name", "=", key),
@@ -275,7 +283,11 @@ class Serializer(models.Model):
 
         visited.append((record, self))
 
-        result = {}
+        if self.base_serializer_id:
+            result = self.base_serializer_id._serialize(record, visited)
+        else:
+            result = {}
+
         for field in self.field_ids.filtered("exporting"):
             fname = field.name or field.field_id.name
             data = field._serialize(record, visited[:])
